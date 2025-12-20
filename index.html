@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angkringan Sendhika - Tempat Nongkrong Asik</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Angkringan Sendhika - Tempat dimana setiap orang bisa diterima dengan hangat. Nikmati makanan dan minuman khas angkringan dengan suasana nyaman.">
+    <meta name="keywords" content="angkringan, sendhika, nongkrong, kuliner, mie ayam, kopi, cemilan">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'angkringan-primary': '#5D4037',
+                        'angkringan-accent': '#FFCA28',
+                        'angkringan-bg': '#FFF8E1',
+                        'angkringan-text': '#3E2723',
+                        'angkringan-dark': '#2C1810',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neo': '4px 4px 0px 0px #5D4037',
+                        'neo-lg': '8px 8px 0px 0px #5D4037',
+                        'neo-accent': '4px 4px 0px 0px #FFCA28',
+                        'neo-dark': '6px 6px 0px 0px #3E2723',
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'bounce-slow': 'bounce 2s ease-in-out infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.6s ease-out forwards',
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        * {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFF8E1;
+            overflow-x: hidden;
+        }
+
+        /* Background Pattern */
+        .pattern-bg {
+            background-image: radial-gradient(#5D4037 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+
+        .pattern-bg-light {
+            background-image: radial-gradient(#FFCA28 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Neo Brutalism Styles */
+        .neo-box {
+            background: white;
+            border: 3px solid #3E2723;
+            box-shadow: 6px 6px 0px 0px #5D4037;
+            border-radius: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .neo-box:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0px 0px #5D4037;
+        }
+
+        .neo-card {
+            background: white;
+            border: 3px solid #5D4037;
+            box-shadow: 5px 5px 0px 0px #FFCA28;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .neo-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px 0px #FFCA28;
+        }
+
+        .btn-neo-primary {
+            background: #5D4037;
+            color: #FFCA28;
+            border: 3px solid #3E2723;
+            box-shadow: 4px 4px 0px 0px #3E2723;
+            transition: all 0.15s ease;
+        }
+
+        .btn-neo-primary:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px #3E2723;
+        }
+
+        .btn-neo-primary:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+
+        .btn-neo-accent {
+            background: #FFCA28;
+            color: #3E2723;
+            border: 3px solid #5D4037;
+            box-shadow: 4px 4px 0px 0px #5D4037;
+            transition: all 0.15s ease;
+        }
+
+        .btn-neo-accent:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px #5D4037;
+        }
+
+        /* Animations */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes wiggle {
+
+            0%,
+            100% {
+                transform: rotate(-3deg);
+            }
+
+            50% {
+                transform: rotate(3deg);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Image Mask */
+        .hero-image-container {
+            position: relative;
+        }
+
+        .hero-image-container::before {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            background: #FFCA28;
+            border: 3px solid #5D4037;
+            border-radius: 20px;
+            z-index: -1;
+            transform: rotate(3deg);
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+        }
+
+        /* Logo spin on hover */
+        .logo-spin:hover {
+            animation: spin 0.5s ease-in-out;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Marquee */
+        .marquee {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+
+        @keyframes marquee {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Feature card glow */
+        .feature-glow {
+            position: relative;
+        }
+
+        .feature-glow::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 202, 40, 0.1), transparent);
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-glow:hover::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="bg-angkringan-bg text-angkringan-text">
+
+    <!-- Navigation -->
+    <nav
+        class="fixed top-0 left-0 right-0 z-50 bg-angkringan-bg/95 backdrop-blur-sm border-b-4 border-angkringan-primary">
+        <div class="container mx-auto px-4 py-3 max-w-7xl">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-12 h-12 bg-white rounded-full border-2 border-angkringan-primary shadow-neo-sm overflow-hidden logo-spin cursor-pointer">
+                        <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1766251569040-eql6k.jpeg"
+                            alt="Logo" class="w-full h-full object-cover">
+                    </div>
+                    <span
+                        class="text-lg font-black italic bg-angkringan-accent px-2 py-1 border-2 border-angkringan-primary transform -skew-x-3">SENDHIKA</span>
+                </div>
+
+                <!-- Nav Links - Desktop -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="#beranda" class="font-bold hover:text-angkringan-accent transition-colors">Beranda</a>
+                    <a href="#tentang" class="font-bold hover:text-angkringan-accent transition-colors">Tentang</a>
+                    <a href="#menu" class="font-bold hover:text-angkringan-accent transition-colors">Menu</a>
+                    <a href="#lokasi" class="font-bold hover:text-angkringan-accent transition-colors">Lokasi</a>
+                </div>
+
+                <!-- CTA Button -->
+                <a href="awal.html"
+                    class="btn-neo-primary px-5 py-2 rounded-full font-bold text-sm flex items-center gap-2">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    PESAN
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="beranda" class="min-h-screen pattern-bg pt-20 relative overflow-hidden">
+        <div class="container mx-auto px-4 max-w-7xl py-12 md:py-20">
+            <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+
+                <!-- Left Content -->
+                <div class="order-2 lg:order-1 text-center lg:text-left">
+                    <!-- Badge -->
+                    <div class="inline-block mb-6 animate-[fadeIn_0.5s_ease-out]">
+                        <span
+                            class="bg-angkringan-accent text-angkringan-primary px-4 py-2 rounded-full font-bold text-sm border-2 border-angkringan-primary shadow-neo-sm inline-flex items-center gap-2">
+                            <span class="animate-pulse">🔥</span> HITS DI JOGJA!
+                        </span>
+                    </div>
+
+                    <!-- Headline -->
+                    <h1
+                        class="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-6 animate-[slideUp_0.6s_ease-out]">
+                        <span class="block">Nongkrong</span>
+                        <span class="block text-angkringan-primary">Enak, Murah,</span>
+                        <span
+                            class="inline-block bg-angkringan-accent px-3 py-1 border-3 border-angkringan-primary transform -skew-x-3 shadow-neo">
+                            Penuh Cerita!
+                        </span>
+                    </h1>
+
+                    <!-- Tagline -->
+                    <p
+                        class="text-lg md:text-xl text-gray-600 mb-8 max-w-md mx-auto lg:mx-0 animate-[slideUp_0.7s_ease-out]">
+                        <span class="font-bold text-angkringan-primary">Angkringan Sendhika</span> — Tempat dimana
+                        setiap orang bisa diterima dengan hangat. Yuk mampir! ☕
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div
+                        class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-[slideUp_0.8s_ease-out]">
+                        <a href="awal.html"
+                            class="btn-neo-primary px-8 py-4 rounded-xl font-black text-lg inline-flex items-center justify-center gap-3">
+                            <i data-lucide="utensils" class="w-6 h-6"></i>
+                            LIHAT MENU
+                        </a>
+                        <a href="#tentang"
+                            class="btn-neo-accent px-8 py-4 rounded-xl font-bold text-lg inline-flex items-center justify-center gap-3">
+                            <i data-lucide="info" class="w-5 h-5"></i>
+                            TENTANG KAMI
+                        </a>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-4 mt-12 animate-[slideUp_0.9s_ease-out]">
+                        <div class="neo-card p-4 text-center">
+                            <div class="text-2xl md:text-3xl font-black text-angkringan-primary">1K+</div>
+                            <div class="text-xs font-bold text-gray-500">PELANGGAN</div>
+                        </div>
+                        <div class="neo-card p-4 text-center">
+                            <div class="text-2xl md:text-3xl font-black text-angkringan-primary">15+</div>
+                            <div class="text-xs font-bold text-gray-500">MENU</div>
+                        </div>
+                        <div class="neo-card p-4 text-center">
+                            <div class="text-2xl md:text-3xl font-black text-angkringan-primary">⭐ 4.8</div>
+                            <div class="text-xs font-bold text-gray-500">RATING</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Content - Image -->
+                <div class="order-1 lg:order-2 flex justify-center">
+                    <div class="relative">
+                        <!-- Main Image -->
+                        <div class="hero-image-container animate-float">
+                            <div
+                                class="w-72 h-72 md:w-96 md:h-96 rounded-2xl border-4 border-angkringan-primary overflow-hidden bg-white shadow-neo-lg">
+                                <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1766251569040-eql6k.jpeg"
+                                    alt="Angkringan Sendhika" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+
+                        <!-- Floating Elements -->
+                        <div
+                            class="absolute -top-4 -right-4 bg-angkringan-accent px-4 py-2 rounded-xl border-3 border-angkringan-primary shadow-neo animate-wiggle">
+                            <span class="font-black text-lg">MURAH!</span>
+                        </div>
+
+                        <div
+                            class="absolute -bottom-4 -left-4 bg-white px-4 py-2 rounded-xl border-3 border-angkringan-primary shadow-neo animate-bounce-slow">
+                            <span class="font-bold">Mulai Rp 2.500 ✨</span>
+                        </div>
+
+                        <!-- Decorative Shapes -->
+                        <div
+                            class="absolute top-1/2 -right-12 w-8 h-8 bg-angkringan-accent rounded-full border-2 border-angkringan-primary animate-pulse">
+                        </div>
+                        <div
+                            class="absolute bottom-1/4 -left-8 w-6 h-6 bg-angkringan-primary rounded-full animate-pulse-slow">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 scroll-indicator hidden md:block">
+                <a href="#tentang"
+                    class="flex flex-col items-center text-angkringan-primary opacity-70 hover:opacity-100 transition-opacity">
+                    <span class="text-sm font-bold mb-2">Scroll</span>
+                    <i data-lucide="chevron-down" class="w-6 h-6"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee Banner -->
+    <div class="bg-angkringan-primary py-4 border-y-4 border-angkringan-text overflow-hidden">
+        <div class="marquee">
+            <div class="marquee-content">
+                <span class="inline-flex items-center gap-8 text-angkringan-accent font-black text-xl mx-4">
+                    <span>🍜 MIE AYAM CHILLI OIL</span>
+                    <span>•</span>
+                    <span>☕ ES KOPI</span>
+                    <span>•</span>
+                    <span>🥟 PANGSIT</span>
+                    <span>•</span>
+                    <span>🧋 ES COKLAT</span>
+                    <span>•</span>
+                    <span>🍡 MOCHIRO</span>
+                    <span>•</span>
+                    <span>🍜 MIE AYAM CHILLI OIL</span>
+                    <span>•</span>
+                    <span>☕ ES KOPI</span>
+                    <span>•</span>
+                    <span>🥟 PANGSIT</span>
+                    <span>•</span>
+                    <span>🧋 ES COKLAT</span>
+                    <span>•</span>
+                    <span>🍡 MOCHIRO</span>
+                    <span>•</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="tentang" class="py-20 bg-white relative">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+                <!-- Left - Image Grid -->
+                <div class="grid grid-cols-2 gap-4 animate-on-scroll">
+                    <div class="space-y-4">
+                        <div class="neo-card p-2 h-48">
+                            <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1765358030002-45feg.jpg"
+                                alt="Mie Ayam" class="w-full h-full object-cover rounded-lg">
+                        </div>
+                        <div class="neo-card p-2 h-32">
+                            <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1765358023482-uqnkio.jpg"
+                                alt="Es Kopi" class="w-full h-full object-cover rounded-lg">
+                        </div>
+                    </div>
+                    <div class="space-y-4 mt-8">
+                        <div class="neo-card p-2 h-32">
+                            <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1765358015335-lf1euy.jpg"
+                                alt="Mochiro" class="w-full h-full object-cover rounded-lg">
+                        </div>
+                        <div class="neo-card p-2 h-48">
+                            <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1765358022379-k86v1d.jpg"
+                                alt="Es Coklat" class="w-full h-full object-cover rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right - Content -->
+                <div class="animate-on-scroll">
+                    <div class="inline-block mb-4">
+                        <span
+                            class="bg-angkringan-bg text-angkringan-primary px-4 py-2 rounded-full font-bold text-sm border-2 border-angkringan-primary">
+                            ☕ TENTANG KAMI
+                        </span>
+                    </div>
+
+                    <h2 class="text-3xl md:text-4xl font-black mb-6">
+                        Lebih dari Sekedar
+                        <span class="text-angkringan-primary">Tempat Makan</span>
+                    </h2>
+
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        <strong>Angkringan Sendhika</strong> hadir sebagai tempat nongkrong yang nyaman untuk semua
+                        kalangan. Dari mahasiswa yang lagi butuh caffeine boost, sampai keluarga yang mau makan murah
+                        tapi enak — semua bisa merasa seperti di rumah sendiri di sini.
+                    </p>
+
+                    <p class="text-gray-600 mb-8 leading-relaxed">
+                        Kami percaya bahwa makanan enak tidak harus mahal. Dengan bahan berkualitas dan resep rumahan,
+                        setiap menu yang kami sajikan dibuat dengan sepenuh hati. 💛
+                    </p>
+
+                    <!-- Features -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="neo-box p-4 feature-glow">
+                            <div
+                                class="w-12 h-12 bg-angkringan-accent rounded-xl flex items-center justify-center mb-3 border-2 border-angkringan-primary">
+                                <i data-lucide="heart" class="w-6 h-6 text-angkringan-primary"></i>
+                            </div>
+                            <h4 class="font-bold mb-1">Ramah & Hangat</h4>
+                            <p class="text-sm text-gray-500">Pelayanan dari hati</p>
+                        </div>
+
+                        <div class="neo-box p-4 feature-glow">
+                            <div
+                                class="w-12 h-12 bg-angkringan-accent rounded-xl flex items-center justify-center mb-3 border-2 border-angkringan-primary">
+                                <i data-lucide="wallet" class="w-6 h-6 text-angkringan-primary"></i>
+                            </div>
+                            <h4 class="font-bold mb-1">Harga Merakyat</h4>
+                            <p class="text-sm text-gray-500">Kantong aman, perut kenyang</p>
+                        </div>
+
+                        <div class="neo-box p-4 feature-glow">
+                            <div
+                                class="w-12 h-12 bg-angkringan-accent rounded-xl flex items-center justify-center mb-3 border-2 border-angkringan-primary">
+                                <i data-lucide="chef-hat" class="w-6 h-6 text-angkringan-primary"></i>
+                            </div>
+                            <h4 class="font-bold mb-1">Rasa Autentik</h4>
+                            <p class="text-sm text-gray-500">Resep turun-temurun</p>
+                        </div>
+
+                        <div class="neo-box p-4 feature-glow">
+                            <div
+                                class="w-12 h-12 bg-angkringan-accent rounded-xl flex items-center justify-center mb-3 border-2 border-angkringan-primary">
+                                <i data-lucide="sparkles" class="w-6 h-6 text-angkringan-primary"></i>
+                            </div>
+                            <h4 class="font-bold mb-1">Selalu Fresh</h4>
+                            <p class="text-sm text-gray-500">Dibuat saat dipesan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Highlights Section -->
+    <section id="menu" class="py-20 pattern-bg-light relative">
+        <div class="container mx-auto px-4 max-w-7xl">
+
+            <!-- Section Header -->
+            <div class="text-center mb-12 animate-on-scroll">
+                <span
+                    class="bg-angkringan-primary text-angkringan-accent px-4 py-2 rounded-full font-bold text-sm inline-block mb-4 border-2 border-angkringan-text">
+                    🔥 MENU FAVORIT
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black">
+                    Yang Paling <span class="text-angkringan-primary">Laris Manis!</span>
+                </h2>
+            </div>
+
+            <!-- Menu Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+
+                <!-- Menu Item 1 -->
+                <div class="neo-card p-4 animate-on-scroll">
+                    <div class="relative mb-4">
+                        <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1765358030002-45feg.jpg"
+                            alt="Mie Ayam Chilli Oil"
+                            class="w-full h-40 object-cover rounded-lg border-2 border-angkringan-primary">
+                        <span
+                            class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-lg text-xs font-bold border-2 border-black">BEST
+                            SELLER</span>
+                    </div>
+                    <h3 class="font-black text-lg mb-1">Mie Ayam Chilli Oil</h3>
+                    <p class="text-gray-500 text-sm mb-3">Pedas nampol, bikin nagih!</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-black text-angkringan-primary text-xl">Rp 10.000</span>
+                        <span class="text-2xl">🍜</span>
+                    </div>
+                </div>
+
+                <!-- Menu Item 2 -->
+                <div class="neo-card p-4 animate-on-scroll">
+                    <div class="relative mb-4">
+                        <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1765358023482-uqnkio.jpg"
+                            alt="Es Kopi"
+                            class="w-full h-40 object-cover rounded-lg border-2 border-angkringan-primary">
+                        <span
+                            class="absolute top-2 right-2 bg-angkringan-accent text-angkringan-text px-2 py-1 rounded-lg text-xs font-bold border-2 border-black">FAVORIT</span>
+                    </div>
+                    <h3 class="font-black text-lg mb-1">Es Kopi</h3>
+                    <p class="text-gray-500 text-sm mb-3">Seger, bikin melek!</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-black text-angkringan-primary text-xl">Rp 4.000</span>
+                        <span class="text-2xl">☕</span>
+                    </div>
+                </div>
+
+                <!-- Menu Item 3 -->
+                <div class="neo-card p-4 animate-on-scroll">
+                    <div class="relative mb-4">
+                        <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1765358032173-77w5yp.jpg"
+                            alt="Pangsit Chilli Oil"
+                            class="w-full h-40 object-cover rounded-lg border-2 border-angkringan-primary">
+                    </div>
+                    <h3 class="font-black text-lg mb-1">Pangsit Chilli Oil</h3>
+                    <p class="text-gray-500 text-sm mb-3">Cemilan pedes favorit!</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-black text-angkringan-primary text-xl">Rp 10.000</span>
+                        <span class="text-2xl">🥟</span>
+                    </div>
+                </div>
+
+                <!-- Menu Item 4 -->
+                <div class="neo-card p-4 animate-on-scroll">
+                    <div class="relative mb-4">
+                        <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1765358015335-lf1euy.jpg"
+                            alt="Mochiro"
+                            class="w-full h-40 object-cover rounded-lg border-2 border-angkringan-primary">
+                        <span
+                            class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-lg text-xs font-bold border-2 border-black">MURAH!</span>
+                    </div>
+                    <h3 class="font-black text-lg mb-1">Mochiro</h3>
+                    <p class="text-gray-500 text-sm mb-3">Cemilan manis, kenyal!</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-black text-angkringan-primary text-xl">Rp 2.500</span>
+                        <span class="text-2xl">🍡</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="text-center animate-on-scroll">
+                <a href="awal.html"
+                    class="btn-neo-primary px-10 py-5 rounded-xl font-black text-xl inline-flex items-center gap-3">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                    LIHAT SEMUA MENU
+                    <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Location Section -->
+    <section id="lokasi" class="py-20 bg-angkringan-primary pattern-bg relative">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+                <!-- Left - Info -->
+                <div class="text-white animate-on-scroll">
+                    <span
+                        class="bg-angkringan-accent text-angkringan-primary px-4 py-2 rounded-full font-bold text-sm inline-block mb-4 border-2 border-angkringan-text">
+                        📍 LOKASI & JAM BUKA
+                    </span>
+
+                    <h2 class="text-3xl md:text-4xl font-black mb-6">
+                        Yuk Mampir ke <span class="text-angkringan-accent">Angkringan!</span>
+                    </h2>
+
+                    <div class="space-y-6">
+                        <!-- Address -->
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 bg-angkringan-accent rounded-xl flex items-center justify-center flex-shrink-0 border-2 border-angkringan-text">
+                                <i data-lucide="map-pin" class="w-6 h-6 text-angkringan-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-angkringan-accent mb-1">Alamat</h4>
+                                <p class="text-orange-100">Jl. Seturan Raya, Caturtunggal, Kec. Depok, Kabupaten Sleman,
+                                    Daerah Istimewa Yogyakarta</p>
+                            </div>
+                        </div>
+
+                        <!-- Hours -->
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 bg-angkringan-accent rounded-xl flex items-center justify-center flex-shrink-0 border-2 border-angkringan-text">
+                                <i data-lucide="clock" class="w-6 h-6 text-angkringan-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-angkringan-accent mb-1">Jam Operasional</h4>
+                                <p class="text-orange-100">Setiap Hari: <strong class="text-white">16.00 - 23.00
+                                        WIB</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Contact -->
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 bg-angkringan-accent rounded-xl flex items-center justify-center flex-shrink-0 border-2 border-angkringan-text">
+                                <i data-lucide="phone" class="w-6 h-6 text-angkringan-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-angkringan-accent mb-1">Kontak</h4>
+                                <p class="text-orange-100">WhatsApp: <strong class="text-white">0895-0253-3370</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social & CTA -->
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                        <a href="https://wa.me/6289502533370" target="_blank"
+                            class="btn-neo-accent px-6 py-3 rounded-xl font-bold inline-flex items-center justify-center gap-2">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i>
+                            CHAT WHATSAPP
+                        </a>
+                        <a href="https://www.google.com/maps/place/Angkringan+Sendhika/@-7.0020615,107.5314499,13z"
+                            target="_blank"
+                            class="bg-white text-angkringan-primary px-6 py-3 rounded-xl font-bold inline-flex items-center justify-center gap-2 border-3 border-angkringan-text shadow-neo-dark hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_#3E2723] transition-all">
+                            <i data-lucide="navigation" class="w-5 h-5"></i>
+                            BUKA MAPS
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right - Embedded Map -->
+                <div class="animate-on-scroll">
+                    <div class="neo-box bg-angkringan-bg p-2 overflow-hidden">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63360.98115571728!2d107.53144994113019!3d-7.002061504309225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e9001fc46e17%3A0xc9cc4310b43939f8!2sAngkringan%20Sendhika!5e0!3m2!1sid!2sid!4v1766247414001!5m2!1sid!2sid"
+                            width="100%" height="380" style="border:0; border-radius: 12px;" allowfullscreen=""
+                            loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-full">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-angkringan-accent border-y-4 border-angkringan-primary">
+        <div class="container mx-auto px-4 max-w-4xl text-center animate-on-scroll">
+            <h2 class="text-3xl md:text-4xl font-black text-angkringan-primary mb-4">
+                Sudah Lapar? 🤤
+            </h2>
+            <p class="text-lg text-angkringan-text mb-8">
+                Pesan sekarang lewat WhatsApp, langsung antar tanpa ribet!
+            </p>
+            <a href="awal.html"
+                class="btn-neo-primary px-12 py-5 rounded-xl font-black text-xl inline-flex items-center gap-3">
+                <i data-lucide="shopping-bag" class="w-7 h-7"></i>
+                PESAN SEKARANG
+                <i data-lucide="arrow-right" class="w-6 h-6"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-angkringan-text text-white py-12">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+
+                <!-- Brand -->
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-white rounded-full border-2 border-angkringan-accent overflow-hidden">
+                            <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1766251569040-eql6k.jpeg"
+                                alt="Logo" class="w-full h-full object-cover">
+                        </div>
+                        <span class="font-black text-xl text-angkringan-accent">ANGKRINGAN SENDHIKA</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        Tempat dimana setiap orang bisa diterima dengan hangat. Makanan enak, harga merakyat!
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-bold text-angkringan-accent mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#beranda" class="hover:text-white transition-colors">Beranda</a></li>
+                        <li><a href="#tentang" class="hover:text-white transition-colors">Tentang Kami</a></li>
+                        <li><a href="#menu" class="hover:text-white transition-colors">Menu</a></li>
+                        <li><a href="awal.html" class="hover:text-white transition-colors">Pesan Online</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h4 class="font-bold text-angkringan-accent mb-4">Hubungi Kami</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                            0895-0253-3370
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="clock" class="w-4 h-4"></i>
+                            16.00 - 23.00 WIB
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i>
+                            Jl. Seturan Raya, Yogyakarta
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2024 Angkringan Sendhika. Made with ❤️ in Yogyakarta</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <a href="#beranda" id="backToTop"
+        class="fixed bottom-6 right-6 w-14 h-14 bg-angkringan-primary text-angkringan-accent rounded-full flex items-center justify-center border-3 border-angkringan-text shadow-neo opacity-0 invisible transition-all duration-300 hover:translate-y-[-2px] z-40">
+        <i data-lucide="arrow-up" class="w-6 h-6"></i>
+    </a>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Scroll Animation Observer
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Back to Top Button
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.remove('opacity-0', 'invisible');
+                backToTop.classList.add('opacity-100', 'visible');
+            } else {
+                backToTop.classList.add('opacity-0', 'invisible');
+                backToTop.classList.remove('opacity-100', 'visible');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

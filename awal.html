@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angkringan Sendhika - Pesan Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'angkringan-primary': '#5D4037', // Cokelat tua
+                        'angkringan-accent': '#FFCA28', // Kuning
+                        'angkringan-bg': '#FFF8E1', // Krem
+                        'angkringan-text': '#3E2723', // Teks
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neo': '4px 4px 0px 0px #5D4037', // Shadow Gen Z (Kasar)
+                        'neo-hover': '2px 2px 0px 0px #5D4037',
+                        'neo-sm': '2px 2px 0px 0px #5D4037',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(#5D4037 1px, transparent 1px);
+            background-size: 20px 20px;
+            /* Pola titik-titik retro */
+        }
+
+        /* Gaya Card Gen Z / Neo-Brutalism */
+        .menu-card {
+            background: white;
+            border: 2px solid #5D4037;
+            box-shadow: 4px 4px 0px 0px #5D4037;
+            /* Bayangan kasar */
+            transition: all 0.2s ease-in-out;
+            border-radius: 12px;
+        }
+
+        .menu-card:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px #5D4037;
+            /* Efek tekan */
+        }
+
+        .neo-box {
+            background: white;
+            border: 2px solid #5D4037;
+            box-shadow: 6px 6px 0px 0px #FFCA28;
+            /* Shadow kuning */
+            border-radius: 16px;
+        }
+
+        .btn-neo {
+            border: 2px solid #3E2723;
+            box-shadow: 2px 2px 0px 0px #3E2723;
+            transition: all 0.1s;
+        }
+
+        .btn-neo:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px 0px #3E2723;
+        }
+
+        .btn-neo:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        /* Category Filter Neo Style */
+        .cat-btn {
+            border: 2px solid #5D4037;
+            background: white;
+            color: #5D4037;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0px 0px #5D4037;
+        }
+
+        .cat-btn.active {
+            background: #5D4037;
+            color: #FFCA28;
+            box-shadow: none;
+            transform: translate(2px, 2px);
+        }
+
+        .cat-btn:hover:not(.active) {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px 0px #5D4037;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            animation: slideIn 0.3s ease-out;
+            border: 2px solid #5D4037;
+            box-shadow: 4px 4px 0px 0px #3E2723;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .slide-out {
+            animation: slideOut 0.3s ease-in;
+        }
+    </style>
+</head>
+
+<body class="bg-angkringan-bg text-angkringan-text font-sans min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="bg-angkringan-primary text-white sticky top-0 z-10 border-b-4 border-angkringan-text shadow-neo">
+        <div class="container mx-auto p-4 flex items-center justify-between gap-4 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <!-- Back to Beranda Button -->
+                <a href="index.html"
+                    class="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-angkringan-accent text-angkringan-primary rounded-full border-2 border-angkringan-text hover:scale-110 transition-transform duration-200"
+                    title="Kembali ke Beranda">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </a>
+
+                <!-- Logo -->
+                <div
+                    class="w-14 h-14 md:w-16 md:h-16 flex-shrink-0 bg-white rounded-full border-2 border-angkringan-text shadow-neo-sm overflow-hidden transform hover:rotate-12 transition-transform duration-300">
+                    <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1766251569040-eql6k.jpeg"
+                        alt="Logo Angkringan Sendhika" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Teks Brand -->
+                <div class="hidden sm:block">
+                    <h1
+                        class="text-xl md:text-2xl font-black tracking-tighter italic transform -skew-x-6 inline-block bg-angkringan-accent text-angkringan-primary px-2 border-2 border-angkringan-primary">
+                        ANGKRINGAN SENDHIKA</h1>
+                    <p class="text-xs font-bold text-orange-100 mt-1 tracking-wide">Tempat dimana setiap orang bisa
+                        diterima dengan hangat</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex items-center gap-2 md:gap-4">
+                <a href="index.html"
+                    class="hidden md:flex items-center gap-1 text-sm font-bold text-orange-100 hover:text-angkringan-accent transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Beranda
+                </a>
+                <span class="hidden md:block text-orange-200">|</span>
+                <span class="text-sm font-bold text-angkringan-accent flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                        <line x1="3" x2="21" y1="6" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span class="hidden sm:inline">Pesan</span>
+                </span>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 max-w-7xl pt-8">
+        <div class="bg-white border-2 border-angkringan-primary p-4 mb-8 shadow-neo rounded-xl inline-block">
+            <h2 class="text-3xl font-extrabold text-angkringan-text">🔥 MENU HITS</h2>
+        </div>
+
+        <!-- Filter Kategori -->
+        <div class="mb-8 flex flex-wrap gap-3">
+            <button onclick="filterCategory('all')"
+                class="category-filter cat-btn active px-6 py-2 rounded-full font-bold text-sm" data-category="all">
+                SEMUA
+            </button>
+            <button onclick="filterCategory('Makanan')"
+                class="category-filter cat-btn px-6 py-2 rounded-full font-bold text-sm" data-category="Makanan">
+                MAKANAN
+            </button>
+            <button onclick="filterCategory('Minuman')"
+                class="category-filter cat-btn px-6 py-2 rounded-full font-bold text-sm" data-category="Minuman">
+                MINUMAN
+            </button>
+            <button onclick="filterCategory('Cemilan')"
+                class="category-filter cat-btn px-6 py-2 rounded-full font-bold text-sm" data-category="Cemilan">
+                CEMILAN
+            </button>
+        </div>
+
+        <div class="lg:grid lg:grid-cols-3 lg:gap-8">
+
+            <!-- Kolom Menu -->
+            <section class="lg:col-span-2 mb-8 lg:mb-0">
+                <div id="menuContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Daftar Menu akan diisi oleh JavaScript -->
+                </div>
+            </section>
+
+            <!-- Kolom Keranjang Belanja -->
+            <section class="lg:col-span-1">
+                <div class="neo-box p-6 sticky top-24">
+                    <h3
+                        class="text-2xl font-black text-angkringan-text mb-4 flex items-center border-b-2 border-dashed border-angkringan-primary pb-3">
+                        <i data-lucide="shopping-bag" class="w-7 h-7 mr-3 fill-angkringan-accent"></i>
+                        KERANJANG
+                    </h3>
+
+                    <div id="cartItemsContainer" class="space-y-4 min-h-20 max-h-96 overflow-y-auto pr-2">
+                        <p id="emptyCartMessage"
+                            class="text-gray-400 font-bold text-center py-4 border-2 border-gray-100 border-dashed rounded-lg">
+                            Belum ada jajanan nih! 🤤</p>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t-2 border-angkringan-primary">
+                        <div
+                            class="flex justify-between items-center mb-4 bg-angkringan-bg p-3 rounded-lg border-2 border-angkringan-primary">
+                            <span class="text-lg font-bold">TOTAL</span>
+                            <span id="cartTotal" class="text-2xl font-black text-angkringan-primary">Rp 0</span>
+                        </div>
+
+                        <div class="grid gap-3">
+                            <button id="clearCartBtn"
+                                class="w-full bg-white text-red-600 border-2 border-red-600 py-2 rounded-lg font-bold text-sm btn-neo disabled:opacity-50 disabled:shadow-none disabled:translate-x-0"
+                                disabled>
+                                BATALIN SEMUA
+                            </button>
+
+                            <button id="checkoutBtn"
+                                class="w-full bg-angkringan-primary text-angkringan-accent border-2 border-angkringan-text py-3 rounded-lg font-black text-lg btn-neo flex justify-center items-center gap-2 disabled:opacity-50 disabled:shadow-none"
+                                disabled>
+                                GAS PESAN <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal untuk Konfirmasi Pesanan -->
+    <div id="checkoutModal"
+        class="fixed inset-0 bg-angkringan-primary/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border-4 border-black p-8 max-w-lg w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-2xl transform transition-all duration-300 scale-95 opacity-0 max-h-[90vh] overflow-y-auto"
+            id="modalContent">
+            <div class="flex justify-between items-start mb-6 border-b-4 border-black pb-4">
+                <h3 class="text-3xl font-black italic">FIX PESAN?</h3>
+                <button onclick="closeModal()"
+                    class="bg-red-500 text-white border-2 border-black p-1 hover:bg-red-600 btn-neo rounded-md">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Form Informasi Pelanggan -->
+            <div class="mb-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-900 mb-1 uppercase">Nama Kamu</label>
+                    <input type="text" id="customerName"
+                        class="w-full px-4 py-3 border-2 border-black rounded-lg font-bold focus:outline-none focus:shadow-[4px_4px_0px_0px_#FFCA28] transition-shadow bg-gray-50"
+                        placeholder="Siapa nih?" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-900 mb-1 uppercase">Nomor Meja</label>
+                    <input type="text" id="tableNumber"
+                        class="w-full px-4 py-3 border-2 border-black rounded-lg font-bold focus:outline-none focus:shadow-[4px_4px_0px_0px_#FFCA28] transition-shadow bg-gray-50"
+                        placeholder="Duduk dimana? / Bawa pulang?">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-900 mb-1 uppercase">Catatan</label>
+                    <textarea id="orderNotes" rows="2"
+                        class="w-full px-4 py-3 border-2 border-black rounded-lg font-bold focus:outline-none focus:shadow-[4px_4px_0px_0px_#FFCA28] transition-shadow bg-gray-50"
+                        placeholder="Pedes? Gapake bawang?"></textarea>
+                </div>
+            </div>
+
+            <!-- Ringkasan Pesanan -->
+            <div class="bg-yellow-100 p-4 rounded-xl mb-6 border-2 border-black border-dashed">
+                <h4 class="font-black text-gray-800 mb-3 flex items-center uppercase text-sm">
+                    <i data-lucide="receipt" class="w-4 h-4 mr-2"></i>
+                    Struk Pesanan
+                </h4>
+                <div id="orderSummary" class="text-sm space-y-2 font-mono text-gray-800">
+                    <!-- Ringkasan pesanan akan diisi di sini -->
+                </div>
+                <div class="border-t-2 border-black border-dashed mt-3 pt-2 flex justify-between font-black text-lg">
+                    <span>TOTAL</span>
+                    <span id="modalTotal">Rp 0</span>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h4 class="font-bold text-gray-900 mb-3 uppercase text-sm">Bayar Pakai Apa?</h4>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="paymentMethod" value="cash" class="peer sr-only" checked
+                            onchange="toggleDana(false)">
+                        <div
+                            class="p-3 border-2 border-gray-300 rounded-xl peer-checked:border-black peer-checked:bg-angkringan-accent peer-checked:shadow-neo-sm transition-all text-center">
+                            <span class="font-bold block">💵 CASH</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="paymentMethod" value="dana" class="peer sr-only"
+                            onchange="toggleDana(true)">
+                        <div
+                            class="p-3 border-2 border-gray-300 rounded-xl peer-checked:border-black peer-checked:bg-[#118EEA] peer-checked:text-white peer-checked:shadow-neo-sm transition-all text-center">
+                            <span class="font-bold block">📱 DANA</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Container DANA (Hidden by default) -->
+                <div id="danaContainer"
+                    class="hidden bg-white p-4 border-2 border-black rounded-xl shadow-neo-sm text-center animate-[slideIn_0.3s_ease-out]">
+                    <p class="font-bold text-sm mb-2 text-[#118EEA]">SCAN BARCODE DANA DI SINI 👇</p>
+                    <div class="bg-white p-2 inline-block border-2 border-gray-200 rounded-lg">
+                        <!-- Pastikan file gambar ini ada di folder yang sama dengan file HTML -->
+                        <img src="https://tsindqootgdabogwgvof.supabase.co/storage/v1/object/public/media/1766251569040-eql6k.jpeg"
+                            alt="Barcode DANA Angkringan Sendhika" class="w-48 h-48 object-contain">
+                    </div>
+                    <p class="text-xs font-bold text-gray-500 mt-2">A.N ANGKRINGAN SENDHIKA</p>
+                    <p class="text-xs font-mono bg-gray-100 p-1 rounded mt-1">0823 .... 5147</p>
+                    <p class="text-xs text-red-500 mt-1 font-semibold">*Jangan lupa screenshot bukti bayar ya!</p>
+                </div>
+            </div>
+
+            <button onclick="sendToWhatsApp()"
+                class="w-full bg-green-500 text-white border-2 border-black py-4 rounded-xl font-black text-xl btn-neo flex items-center justify-center hover:bg-green-600">
+                <i data-lucide="message-circle" class="w-6 h-6 mr-2 fill-current"></i>
+                KIRIM WHATSAPP
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // SUPABASE CONFIG - GANTI DENGAN CREDENTIALS ANDA
+        // =============================================
+        const SUPABASE_URL = 'https://hfxpynnoskgdnkuzbydy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeHB5bm5vc2tnZG5rdXpieWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNDI3OTgsImV4cCI6MjA4MTgxODc5OH0.j5AnlfuVxJgd9s8GR3hpOdG5FT0ikZrB-hLVVzOCsow';
+
+        // Initialize Supabase Client
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Data Menu - akan di-load dari database
+        let menuItems = [];
+        let cart = {};
+        let currentFilter = 'all';
+        let isLoading = true;
+
+        const menuContainer = document.getElementById('menuContainer');
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const cartTotalDisplay = document.getElementById('cartTotal');
+        const cartCountDisplay = document.getElementById('cartCount');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const checkoutModal = document.getElementById('checkoutModal');
+        const modalContent = document.getElementById('modalContent');
+        const orderSummaryDisplay = document.getElementById('orderSummary');
+        const modalTotalDisplay = document.getElementById('modalTotal');
+
+        // Load menu dari Supabase
+        async function loadMenuFromDatabase() {
+            isLoading = true;
+            menuContainer.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <div class="inline-block w-8 h-8 border-4 border-angkringan-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p class="font-bold text-gray-500">Memuat menu...</p>
+                </div>
+            `;
+
+            try {
+                const { data, error } = await _supabase
+                    .from('products')
+                    .select('*')
+                    .eq('is_available', true)
+                    .gt('stock', 0)
+                    .order('category', { ascending: true });
+
+                if (error) throw error;
+
+                // Transform data untuk kompatibilitas
+                menuItems = (data || []).map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    category: item.category,
+                    price: item.price,
+                    imageUrl: item.image_url,
+                    stock: item.stock,
+                    isAvailable: item.is_available
+                }));
+
+                isLoading = false;
+                renderMenu();
+
+            } catch (error) {
+                console.error('Error loading menu:', error);
+                isLoading = false;
+                menuContainer.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-4xl mb-4">😕</div>
+                        <p class="font-bold text-gray-500 mb-4">Gagal memuat menu</p>
+                        <button onclick="loadMenuFromDatabase()" class="px-6 py-2 bg-angkringan-primary text-white rounded-lg font-bold">
+                            Coba Lagi
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Format Rupiah
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        };
+
+        // Fungsi Toggle Dana
+        const toggleDana = (show) => {
+            const container = document.getElementById('danaContainer');
+            if (show) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        };
+
+        // Notifikasi
+        const showNotification = (message, type = 'success') => {
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+            notification.className = `notification px-6 py-4 rounded-lg text-white font-bold ${bgColor} border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('slide-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        };
+
+        // Filter Kategori
+        const filterCategory = (category) => {
+            currentFilter = category;
+            document.querySelectorAll('.category-filter').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.querySelector(`[data-category="${category}"]`);
+            activeBtn.classList.add('active');
+            renderMenu();
+        };
+
+        // Tambah ke Keranjang
+        const addItemToCart = (itemId) => {
+            const item = menuItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            cart[itemId] = (cart[itemId] || 0) + 1;
+            showNotification(`${item.name} +1 🛒`);
+            renderCart();
+            renderMenu();
+        };
+
+        // Update Kuantitas
+        const updateCartQuantity = (itemId, change) => {
+            if (cart[itemId] === undefined) return;
+
+            cart[itemId] += change;
+
+            if (cart[itemId] <= 0) {
+                delete cart[itemId];
+            }
+
+            renderCart();
+            renderMenu();
+        };
+
+        // Kosongkan Keranjang
+        const clearCart = () => {
+            if (confirm('Yakin ingin hapus semua?')) {
+                cart = {};
+                renderCart();
+                renderMenu();
+                showNotification('Keranjang kosong!', 'success');
+            }
+        };
+
+        // Render Menu
+        const renderMenu = () => {
+            menuContainer.innerHTML = '';
+
+            const filteredItems = currentFilter === 'all'
+                ? menuItems
+                : menuItems.filter(item => {
+                    if (currentFilter === 'Cemilan') {
+                        return item.category.includes('Cemilan');
+                    }
+                    return item.category === currentFilter;
+                });
+
+            filteredItems.forEach(item => {
+                const quantity = cart[item.id] || 0;
+
+                const card = document.createElement('div');
+                card.className = `menu-card flex items-center p-3 relative overflow-hidden ${quantity > 0 ? 'bg-orange-50' : ''}`;
+
+                // Overlay accent if selected
+                const borderClass = quantity > 0 ? 'border-angkringan-accent' : '';
+
+                card.innerHTML = `
+                    <div class="relative w-24 h-24 mr-4 flex-shrink-0">
+                        <img src="${item.imageUrl}" 
+                             alt="${item.name}" 
+                             class="w-full h-full object-cover rounded-lg border-2 border-angkringan-primary shadow-sm"
+                             onerror="this.onerror=null; this.src='https://placehold.co/100x100/CCCCCC/333333?text=N/A';">
+                        ${quantity > 0 ? `<div class="absolute -top-2 -right-2 bg-angkringan-accent text-angkringan-primary border-2 border-angkringan-primary w-8 h-8 rounded-full flex items-center justify-center font-black shadow-sm z-10">${quantity}</div>` : ''}
+                    </div>
+                    
+                    <div class="flex-1 min-w-0 pr-2">
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">${item.category}</p>
+                        <h3 class="text-lg font-black text-angkringan-text leading-tight mb-2 line-clamp-2">${item.name}</h3>
+                        <p class="text-angkringan-primary font-bold text-xl">${formatRupiah(item.price)}</p>
+                    </div>
+                `;
+
+                const controls = document.createElement('div');
+                controls.className = 'flex flex-col space-y-2 ml-2 flex-shrink-0';
+
+                if (quantity > 0) {
+                    controls.innerHTML = `
+                        <button onclick="updateCartQuantity('${item.id}', 1)" class="w-10 h-10 flex items-center justify-center bg-angkringan-accent border-2 border-angkringan-primary rounded-lg hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none shadow-[2px_2px_0px_0px_#5D4037] transition-all">
+                            <i data-lucide="plus" class="w-5 h-5 text-angkringan-primary"></i>
+                        </button>
+                        <button onclick="updateCartQuantity('${item.id}', -1)" class="w-10 h-10 flex items-center justify-center bg-white border-2 border-angkringan-primary rounded-lg hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none shadow-[2px_2px_0px_0px_#5D4037] transition-all">
+                            <i data-lucide="minus" class="w-5 h-5 text-angkringan-primary"></i>
+                        </button>
+                    `;
+                } else {
+                    controls.innerHTML = `
+                        <button onclick="addItemToCart('${item.id}')" class="w-10 h-10 flex items-center justify-center bg-angkringan-primary text-white border-2 border-angkringan-primary rounded-lg hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none shadow-[3px_3px_0px_0px_rgba(0,0,0,0.2)] transition-all">
+                            <i data-lucide="plus" class="w-6 h-6"></i>
+                        </button>
+                    `;
+                }
+
+                card.appendChild(controls);
+                menuContainer.appendChild(card);
+            });
+
+            lucide.createIcons();
+        };
+
+        // Render Keranjang
+        const renderCart = () => {
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+            let totalItems = 0;
+
+            const activeItems = menuItems.filter(item => cart[item.id] > 0);
+
+            if (activeItems.length === 0) {
+                emptyCartMessage.style.display = 'block';
+                checkoutBtn.disabled = true;
+                clearCartBtn.disabled = true;
+            } else {
+                emptyCartMessage.style.display = 'none';
+                checkoutBtn.disabled = false;
+                clearCartBtn.disabled = false;
+
+                activeItems.forEach(item => {
+                    const quantity = cart[item.id];
+                    const subtotal = item.price * quantity;
+                    total += subtotal;
+                    totalItems += quantity;
+
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'flex justify-between items-start border-b-2 border-gray-100 border-dashed pb-2';
+                    cartItem.innerHTML = `
+                        <div class="flex-1 pr-2">
+                            <div class="text-sm font-bold text-gray-900">${item.name}</div>
+                            <div class="text-xs text-gray-500">${formatRupiah(item.price)} x ${quantity}</div>
+                        </div>
+                        <div class="text-right font-black text-gray-800">
+                            ${formatRupiah(subtotal)}
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItem);
+                });
+            }
+
+            cartTotalDisplay.textContent = formatRupiah(total);
+            if (cartCountDisplay) cartCountDisplay.textContent = totalItems;
+        };
+
+        // Buka Modal
+        const openModal = () => {
+            let summaryHTML = '';
+            let total = 0;
+
+            const activeItems = menuItems.filter(item => cart[item.id] > 0);
+            activeItems.forEach(item => {
+                const quantity = cart[item.id];
+                const subtotal = item.price * quantity;
+                total += subtotal;
+
+                summaryHTML += `
+                    <div class="flex justify-between">
+                        <span>${quantity}x ${item.name}</span>
+                        <span class="font-bold">${formatRupiah(subtotal)}</span>
+                    </div>
+                `;
+            });
+
+            orderSummaryDisplay.innerHTML = summaryHTML;
+            modalTotalDisplay.textContent = formatRupiah(total);
+
+            checkoutModal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 50);
+        };
+
+        // Tutup Modal
+        const closeModal = () => {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+
+            setTimeout(() => {
+                checkoutModal.classList.add('hidden');
+            }, 300);
+        };
+
+        // Kirim ke WhatsApp
+        const sendToWhatsApp = async () => {
+            const customerName = document.getElementById('customerName').value.trim();
+            const tableNumber = document.getElementById('tableNumber').value.trim();
+            const orderNotes = document.getElementById('orderNotes').value.trim();
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            if (!customerName) {
+                alert('Eits, nama kamu belum diisi nih! 😎');
+                document.getElementById('customerName').focus();
+                return;
+            }
+
+            let message = `Halo, saya mau pesan:\n\n`;
+
+            let total = 0;
+            const activeItems = menuItems.filter(item => cart[item.id] > 0);
+
+            activeItems.forEach(item => {
+                const quantity = cart[item.id];
+                const subtotal = item.price * quantity;
+                total += subtotal;
+                message += `- ${quantity}x ${item.name} = ${formatRupiah(subtotal)}\n`;
+            });
+
+            message += `\n*Total: ${formatRupiah(total)}*\n\n`;
+            message += `Nama: ${customerName}\n`;
+
+            if (tableNumber) {
+                message += `Meja/Lokasi: ${tableNumber}\n`;
+            }
+
+            message += `Bayar: ${paymentMethod === 'cash' ? 'Cash' : 'DANA'}\n`;
+
+            if (orderNotes) {
+                message += `Catatan: ${orderNotes}\n`;
+            }
+
+            message += `\nTerima kasih!`;
+
+            // Update stok di database
+            try {
+                for (const item of activeItems) {
+                    const quantity = cart[item.id];
+                    const newStock = Math.max(0, item.stock - quantity);
+
+                    await _supabase
+                        .from('products')
+                        .update({
+                            stock: newStock,
+                            is_available: newStock > 0
+                        })
+                        .eq('id', item.id);
+                }
+                console.log('Stok berhasil diupdate!');
+            } catch (error) {
+                console.error('Error updating stock:', error);
+                // Tetap lanjutkan pesanan meski gagal update stok
+            }
+
+            const waNumber = '6289502533370';
+            const waURL = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+
+            window.open(waURL, '_blank');
+
+            // Reset form dan keranjang
+            setTimeout(() => {
+                cart = {};
+                renderCart();
+                loadMenuFromDatabase(); // Reload menu dengan stok terbaru
+                closeModal();
+                showNotification('Pesanan meluncur ke WhatsApp! 🚀');
+
+                // Reset form & Payment state
+                document.getElementById('customerName').value = '';
+                document.getElementById('tableNumber').value = '';
+                document.getElementById('orderNotes').value = '';
+
+                // Reset ke Cash (hide Dana)
+                document.querySelector('input[name="paymentMethod"][value="cash"]').checked = true;
+                toggleDana(false);
+            }, 1000);
+        };
+
+        // Event Listeners
+        checkoutBtn.addEventListener('click', openModal);
+        clearCartBtn.addEventListener('click', clearCart);
+
+        // Inisialisasi
+        window.onload = () => {
+            // Load menu dari database
+            loadMenuFromDatabase();
+            renderCart();
+            lucide.createIcons();
+
+            // Set active filter style
+            document.querySelector('[data-category="all"]').classList.add('bg-angkringan-primary', 'text-white');
+        };
+
+        // Global functions
+        window.addItemToCart = addItemToCart;
+        window.updateCartQuantity = updateCartQuantity;
+        window.closeModal = closeModal;
+        window.sendToWhatsApp = sendToWhatsApp;
+        window.filterCategory = filterCategory;
+    </script>
+</body>
+
+</html>

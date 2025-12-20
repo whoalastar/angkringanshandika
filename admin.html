@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Angkringan Sendhika</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'angkringan-primary': '#5D4037',
+                        'angkringan-accent': '#FFCA28',
+                        'angkringan-bg': '#FFF8E1',
+                        'angkringan-text': '#3E2723',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .neo-box {
+            background: white;
+            border: 3px solid #3E2723;
+            box-shadow: 6px 6px 0px 0px #5D4037;
+            border-radius: 16px;
+        }
+
+        .neo-card {
+            background: white;
+            border: 2px solid #5D4037;
+            box-shadow: 4px 4px 0px 0px #FFCA28;
+            border-radius: 12px;
+        }
+
+        .btn-neo {
+            border: 2px solid #3E2723;
+            box-shadow: 3px 3px 0px 0px #3E2723;
+            transition: all 0.1s;
+        }
+
+        .btn-neo:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 2px 2px 0px 0px #3E2723;
+        }
+
+        .btn-neo:active {
+            transform: translate(3px, 3px);
+            box-shadow: none;
+        }
+
+        .input-neo {
+            border: 2px solid #5D4037;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .input-neo:focus {
+            outline: none;
+            box-shadow: 4px 4px 0px 0px #FFCA28;
+        }
+
+        .modal-overlay {
+            background: rgba(93, 64, 55, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .loading-spinner {
+            border: 3px solid #FFF8E1;
+            border-top: 3px solid #5D4037;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-angkringan-bg min-h-screen">
+
+    <!-- ======================= -->
+    <!-- LOGIN PAGE -->
+    <!-- ======================= -->
+    <div id="loginPage" class="min-h-screen flex items-center justify-center p-4">
+        <div class="neo-box p-8 w-full max-w-md">
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <div
+                    class="w-20 h-20 mx-auto mb-4 bg-angkringan-accent rounded-full border-3 border-angkringan-primary flex items-center justify-center">
+                    <i data-lucide="shield-check" class="w-10 h-10 text-angkringan-primary"></i>
+                </div>
+                <h1 class="text-2xl font-black text-angkringan-text">ADMIN PANEL</h1>
+                <p class="text-gray-500 text-sm mt-1">Angkringan Sendhika</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-angkringan-text mb-2">Email</label>
+                    <input type="email" id="loginEmail" required class="input-neo w-full px-4 py-3 font-medium"
+                        placeholder="admin@angkringan.com">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-angkringan-text mb-2">Password</label>
+                    <input type="password" id="loginPassword" required class="input-neo w-full px-4 py-3 font-medium"
+                        placeholder="••••••••">
+                </div>
+
+                <button type="submit" id="loginBtn"
+                    class="btn-neo w-full bg-angkringan-primary text-angkringan-accent py-4 rounded-xl font-black text-lg flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-5 h-5"></i>
+                    MASUK
+                </button>
+            </form>
+
+            <p id="loginError" class="text-red-500 text-sm text-center mt-4 hidden"></p>
+
+            <!-- Back to Home -->
+            <div class="text-center mt-6">
+                <a href="index.html"
+                    class="text-angkringan-primary font-bold hover:underline inline-flex items-center gap-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================= -->
+    <!-- ADMIN DASHBOARD -->
+    <!-- ======================= -->
+    <div id="adminDashboard" class="hidden">
+        <!-- Header -->
+        <header class="bg-angkringan-primary text-white border-b-4 border-angkringan-text sticky top-0 z-40">
+            <div class="container mx-auto px-4 py-4 max-w-7xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-angkringan-accent rounded-full flex items-center justify-center border-2 border-angkringan-text">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-angkringan-primary"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-black text-lg">ADMIN PANEL</h1>
+                        <p class="text-xs text-orange-200">Angkringan Sendhika</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 md:gap-4">
+                    <!-- User Profile -->
+                    <div
+                        class="hidden sm:flex items-center gap-2 bg-angkringan-accent/20 px-3 py-2 rounded-lg border border-angkringan-accent/30">
+                        <div
+                            class="w-8 h-8 bg-angkringan-accent rounded-full flex items-center justify-center border-2 border-white">
+                            <i data-lucide="user" class="w-4 h-4 text-angkringan-primary"></i>
+                        </div>
+                        <div class="hidden md:block">
+                            <p class="text-xs text-orange-200">Logged in as</p>
+                            <p id="userEmail" class="text-sm font-bold text-white truncate max-w-[150px]">Admin</p>
+                        </div>
+                    </div>
+
+                    <a href="awal.html"
+                        class="hidden md:flex items-center gap-2 text-sm font-bold text-orange-100 hover:text-angkringan-accent transition-colors">
+                        <i data-lucide="store" class="w-4 h-4"></i>
+                        Lihat Toko
+                    </a>
+                    <button onclick="logout()"
+                        class="btn-neo bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8 max-w-7xl">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="neo-card p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase">Total Produk</p>
+                            <p id="statTotal" class="text-2xl font-black text-angkringan-primary">0</p>
+                        </div>
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="package" class="w-5 h-5 text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="neo-card p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase">Makanan</p>
+                            <p id="statMakanan" class="text-2xl font-black text-angkringan-primary">0</p>
+                        </div>
+                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="utensils" class="w-5 h-5 text-orange-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="neo-card p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase">Minuman</p>
+                            <p id="statMinuman" class="text-2xl font-black text-angkringan-primary">0</p>
+                        </div>
+                        <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="coffee" class="w-5 h-5 text-cyan-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="neo-card p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase">Stok Rendah</p>
+                            <p id="statLowStock" class="text-2xl font-black text-red-500">0</p>
+                        </div>
+                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Management Section -->
+            <div class="neo-box p-6">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <h2 class="text-xl font-black text-angkringan-text flex items-center gap-2">
+                        <i data-lucide="package" class="w-6 h-6"></i>
+                        Kelola Produk
+                    </h2>
+
+                    <button onclick="openModal('add')"
+                        class="btn-neo bg-angkringan-accent text-angkringan-text px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                        Tambah Produk
+                    </button>
+                </div>
+
+                <!-- Filter -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="filterProducts('all')" data-filter="all"
+                        class="filter-btn px-4 py-2 rounded-lg font-bold text-sm border-2 border-angkringan-primary bg-angkringan-primary text-white">
+                        Semua
+                    </button>
+                    <button onclick="filterProducts('Makanan')" data-filter="Makanan"
+                        class="filter-btn px-4 py-2 rounded-lg font-bold text-sm border-2 border-angkringan-primary bg-white text-angkringan-primary">
+                        Makanan
+                    </button>
+                    <button onclick="filterProducts('Minuman')" data-filter="Minuman"
+                        class="filter-btn px-4 py-2 rounded-lg font-bold text-sm border-2 border-angkringan-primary bg-white text-angkringan-primary">
+                        Minuman
+                    </button>
+                    <button onclick="filterProducts('Cemilan')" data-filter="Cemilan"
+                        class="filter-btn px-4 py-2 rounded-lg font-bold text-sm border-2 border-angkringan-primary bg-white text-angkringan-primary">
+                        Cemilan
+                    </button>
+                </div>
+
+                <!-- Products Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b-2 border-angkringan-primary">
+                                <th class="text-left py-3 px-2 font-bold text-sm text-gray-600">PRODUK</th>
+                                <th class="text-left py-3 px-2 font-bold text-sm text-gray-600">KATEGORI</th>
+                                <th class="text-left py-3 px-2 font-bold text-sm text-gray-600">HARGA</th>
+                                <th class="text-left py-3 px-2 font-bold text-sm text-gray-600">STOK</th>
+                                <th class="text-left py-3 px-2 font-bold text-sm text-gray-600">STATUS</th>
+                                <th class="text-right py-3 px-2 font-bold text-sm text-gray-600">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTable">
+                            <!-- Products will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="text-center py-8">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-gray-500 font-medium">Memuat data...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden text-center py-12">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="package-x" class="w-8 h-8 text-gray-400"></i>
+                    </div>
+                    <p class="text-gray-500 font-medium">Belum ada produk</p>
+                    <button onclick="openModal('add')" class="mt-4 text-angkringan-primary font-bold hover:underline">
+                        + Tambah produk pertama
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ======================= -->
+    <!-- ADD/EDIT PRODUCT MODAL -->
+    <!-- ======================= -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeModal()"></div>
+        <div
+            class="absolute inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-lg">
+            <div class="neo-box p-6 max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 id="modalTitle" class="text-xl font-black text-angkringan-text">Tambah Produk</h3>
+                    <button onclick="closeModal()"
+                        class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <form id="productForm" class="space-y-4">
+                    <input type="hidden" id="productId">
+
+                    <div>
+                        <label class="block text-sm font-bold text-angkringan-text mb-2">Nama Produk *</label>
+                        <input type="text" id="productName" required class="input-neo w-full px-4 py-3 font-medium"
+                            placeholder="Mie Ayam Chilli Oil">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-angkringan-text mb-2">Kategori *</label>
+                        <select id="productCategory" required class="input-neo w-full px-4 py-3 font-medium">
+                            <option value="">Pilih kategori...</option>
+                            <option value="Makanan">Makanan</option>
+                            <option value="Minuman">Minuman</option>
+                            <option value="Cemilan">Cemilan</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-angkringan-text mb-2">Harga (Rp) *</label>
+                        <input type="number" id="productPrice" required min="0"
+                            class="input-neo w-full px-4 py-3 font-medium" placeholder="10000">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-angkringan-text mb-2">Stok</label>
+                        <input type="number" id="productStock" min="0" class="input-neo w-full px-4 py-3 font-medium"
+                            placeholder="100" value="100">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-angkringan-text mb-2">Gambar Produk</label>
+
+                        <!-- Image Preview -->
+                        <div id="imagePreviewContainer" class="hidden mb-3">
+                            <div class="relative inline-block">
+                                <img id="imagePreview" src="" alt="Preview"
+                                    class="w-24 h-24 object-cover rounded-lg border-2 border-angkringan-primary">
+                                <button type="button" onclick="clearImagePreview()"
+                                    class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-600">X</button>
+                            </div>
+                        </div>
+
+                        <!-- Upload Tabs -->
+                        <div class="flex gap-2 mb-3">
+                            <button type="button" onclick="switchImageTab('upload')" id="tabUpload"
+                                class="flex-1 py-2 px-3 rounded-lg font-bold text-sm border-2 border-angkringan-primary bg-angkringan-primary text-white">
+                                Upload File
+                            </button>
+                            <button type="button" onclick="switchImageTab('url')" id="tabUrl"
+                                class="flex-1 py-2 px-3 rounded-lg font-bold text-sm border-2 border-angkringan-primary bg-white text-angkringan-primary">
+                                URL Gambar
+                            </button>
+                        </div>
+
+                        <!-- Upload Input -->
+                        <div id="uploadInput" class="block">
+                            <label
+                                class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-angkringan-primary rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                                <div class="flex flex-col items-center justify-center pt-2 pb-3">
+                                    <i data-lucide="upload" class="w-6 h-6 text-angkringan-primary mb-1"></i>
+                                    <p class="text-sm font-bold text-gray-500">Klik untuk upload</p>
+                                    <p class="text-xs text-gray-400">JPG, PNG (Max 2MB)</p>
+                                </div>
+                                <input type="file" id="productImageFile" accept="image/*" class="hidden"
+                                    onchange="handleImageUpload(event)">
+                            </label>
+                            <div id="uploadProgress" class="hidden mt-2">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="uploadProgressBar"
+                                        class="bg-angkringan-primary h-2 rounded-full transition-all" style="width: 0%">
+                                    </div>
+                                </div>
+                                <p id="uploadStatus" class="text-xs text-gray-500 mt-1">Mengupload...</p>
+                            </div>
+                        </div>
+
+                        <!-- URL Input -->
+                        <div id="urlInput" class="hidden">
+                            <input type="url" id="productImage" class="input-neo w-full px-4 py-3 font-medium"
+                                placeholder="https://example.com/image.jpg" onchange="previewUrlImage()">
+                        </div>
+
+                        <input type="hidden" id="finalImageUrl" value="">
+                    </div>
+
+                    <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+                        <input type="checkbox" id="productAvailable" checked
+                            class="w-5 h-5 rounded border-2 border-angkringan-primary">
+                        <label for="productAvailable" class="font-bold text-angkringan-text">Produk Tersedia</label>
+                    </div>
+
+                    <div class="flex gap-3 pt-4">
+                        <button type="button" onclick="closeModal()"
+                            class="flex-1 btn-neo bg-gray-100 text-gray-700 py-3 rounded-xl font-bold">
+                            Batal
+                        </button>
+                        <button type="submit" id="submitBtn"
+                            class="flex-1 btn-neo bg-angkringan-primary text-angkringan-accent py-3 rounded-xl font-bold flex items-center justify-center gap-2">
+                            <i data-lucide="save" class="w-5 h-5"></i>
+                            <span id="submitBtnText">Simpan</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================= -->
+    <!-- STOCK MODAL -->
+    <!-- ======================= -->
+    <div id="stockModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeStockModal()"></div>
+        <div
+            class="absolute inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-sm">
+            <div class="neo-box p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-black text-angkringan-text">Update Stok</h3>
+                    <button onclick="closeStockModal()"
+                        class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <p id="stockProductName" class="font-bold text-angkringan-primary mb-4"></p>
+
+                <form id="stockForm" class="space-y-4">
+                    <input type="hidden" id="stockProductId">
+
+                    <div>
+                        <label class="block text-sm font-bold text-angkringan-text mb-2">Stok Baru</label>
+                        <input type="number" id="newStock" required min="0"
+                            class="input-neo w-full px-4 py-3 font-medium text-center text-2xl" placeholder="0">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="button" onclick="adjustStock(-10)"
+                            class="flex-1 btn-neo bg-red-100 text-red-600 py-2 rounded-lg font-bold">-10</button>
+                        <button type="button" onclick="adjustStock(-1)"
+                            class="flex-1 btn-neo bg-red-100 text-red-600 py-2 rounded-lg font-bold">-1</button>
+                        <button type="button" onclick="adjustStock(1)"
+                            class="flex-1 btn-neo bg-green-100 text-green-600 py-2 rounded-lg font-bold">+1</button>
+                        <button type="button" onclick="adjustStock(10)"
+                            class="flex-1 btn-neo bg-green-100 text-green-600 py-2 rounded-lg font-bold">+10</button>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full btn-neo bg-angkringan-primary text-angkringan-accent py-3 rounded-xl font-bold">
+                        Update Stok
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================= -->
+    <!-- DELETE CONFIRMATION MODAL -->
+    <!-- ======================= -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeDeleteModal()"></div>
+        <div
+            class="absolute inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-sm">
+            <div class="neo-box p-6 text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="trash-2" class="w-8 h-8 text-red-500"></i>
+                </div>
+                <h3 class="text-xl font-black text-angkringan-text mb-2">Hapus Produk?</h3>
+                <p id="deleteProductName" class="text-gray-500 mb-6"></p>
+
+                <input type="hidden" id="deleteProductId">
+
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteModal()"
+                        class="flex-1 btn-neo bg-gray-100 text-gray-700 py-3 rounded-xl font-bold">
+                        Batal
+                    </button>
+                    <button onclick="confirmDelete()"
+                        class="flex-1 btn-neo bg-red-500 text-white py-3 rounded-xl font-bold">
+                        Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 right-4 z-50 hidden">
+        <div class="neo-card px-6 py-4 flex items-center gap-3">
+            <i id="toastIcon" data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+            <span id="toastMessage" class="font-bold"></span>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // SUPABASE CONFIG - GANTI DENGAN CREDENTIALS ANDA
+        // =============================================
+        const SUPABASE_URL = 'https://hfxpynnoskgdnkuzbydy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeHB5bm5vc2tnZG5rdXpieWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNDI3OTgsImV4cCI6MjA4MTgxODc5OH0.j5AnlfuVxJgd9s8GR3hpOdG5FT0ikZrB-hLVVzOCsow';
+
+        // Initialize Supabase Client
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // State
+        let products = [];
+        let currentFilter = 'all';
+        let currentUser = null;
+
+        // =============================================
+        // AUTHENTICATION
+        // =============================================
+
+        // Check if user is logged in
+        async function checkAuth() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                showDashboard();
+                loadProducts();
+            } else {
+                showLogin();
+            }
+        }
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+            const btn = document.getElementById('loginBtn');
+
+            // Validation
+            if (!email || !password) {
+                errorEl.textContent = 'Email dan password harus diisi!';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loading-spinner"></div> Memproses...';
+            errorEl.classList.add('hidden');
+
+            console.log('Attempting login with:', email);
+
+            try {
+                const { data, error } = await _supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                console.log('Login response:', { data, error });
+
+                if (error) {
+                    console.error('Login error:', error);
+                    throw error;
+                }
+
+                if (data && data.user) {
+                    currentUser = data.user;
+                    console.log('Login successful:', currentUser);
+                    showDashboard();
+                    loadProducts();
+                    showToast('Login berhasil! Selamat datang!', 'success');
+                } else {
+                    throw new Error('User data tidak ditemukan');
+                }
+
+            } catch (error) {
+                console.error('Caught error:', error);
+
+                // Show specific error messages
+                let errorMessage = 'Login gagal!';
+                if (error.message) {
+                    if (error.message.includes('Invalid login credentials')) {
+                        errorMessage = 'Email atau password salah!';
+                    } else if (error.message.includes('Email not confirmed')) {
+                        errorMessage = 'Email belum dikonfirmasi. Cek inbox email Anda.';
+                    } else if (error.message.includes('Invalid email')) {
+                        errorMessage = 'Format email tidak valid!';
+                    } else {
+                        errorMessage = error.message;
+                    }
+                }
+
+                errorEl.textContent = errorMessage;
+                errorEl.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="log-in" class="w-5 h-5"></i> MASUK';
+                lucide.createIcons();
+            }
+        });
+
+        // Logout
+        async function logout() {
+            await _supabase.auth.signOut();
+            currentUser = null;
+            showLogin();
+            showToast('Logout berhasil!', 'success');
+        }
+
+        function showLogin() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+
+            // Display user email
+            if (currentUser && currentUser.email) {
+                const emailDisplay = document.getElementById('userEmail');
+                if (emailDisplay) {
+                    emailDisplay.textContent = currentUser.email;
+                    emailDisplay.title = currentUser.email; // Show full email on hover
+                }
+            }
+        }
+
+        // =============================================
+        // PRODUCTS CRUD
+        // =============================================
+
+        // Load all products
+        async function loadProducts() {
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('productsTable').innerHTML = '';
+
+            try {
+                const { data, error } = await _supabase
+                    .from('products')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                products = data || [];
+                renderProducts();
+                updateStats();
+
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showToast('Gagal memuat produk!', 'error');
+            } finally {
+                document.getElementById('loadingState').classList.add('hidden');
+            }
+        }
+
+        // Render products table
+        function renderProducts() {
+            const tbody = document.getElementById('productsTable');
+            const emptyState = document.getElementById('emptyState');
+
+            let filtered = currentFilter === 'all'
+                ? products
+                : products.filter(p => p.category === currentFilter);
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            tbody.innerHTML = filtered.map(product => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="py-4 px-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-lg border-2 border-gray-200 overflow-hidden bg-gray-100 flex-shrink-0">
+                                ${product.image_url
+                    ? `<img src="${product.image_url}" alt="${product.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/CCCCCC/333333?text=N/A'">`
+                    : `<div class="w-full h-full flex items-center justify-center text-gray-400"><i data-lucide="image" class="w-5 h-5"></i></div>`
+                }
+                            </div>
+                            <span class="font-bold text-angkringan-text">${product.name}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${getCategoryColor(product.category)}">
+                            ${product.category}
+                        </span>
+                    </td>
+                    <td class="py-4 px-2 font-bold text-angkringan-primary">
+                        ${formatRupiah(product.price)}
+                    </td>
+                    <td class="py-4 px-2">
+                        <button onclick="openStockModal('${product.id}', '${product.name}', ${product.stock})"
+                            class="font-bold ${product.stock <= 10 ? 'text-red-500' : 'text-gray-700'} hover:underline">
+                            ${product.stock} pcs
+                        </button>
+                    </td>
+                    <td class="py-4 px-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${product.is_available ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}">
+                            ${product.is_available ? 'Tersedia' : 'Habis'}
+                        </span>
+                    </td>
+                    <td class="py-4 px-2 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <button onclick="openModal('edit', '${product.id}')" 
+                                class="w-9 h-9 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors"
+                                title="Edit">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="openDeleteModal('${product.id}', '${product.name}')"
+                                class="w-9 h-9 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition-colors"
+                                title="Hapus">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // Create/Update Product
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('productId').value;
+            const imageUrl = document.getElementById('finalImageUrl').value || document.getElementById('productImage').value || null;
+
+            const productData = {
+                name: document.getElementById('productName').value,
+                category: document.getElementById('productCategory').value,
+                price: parseInt(document.getElementById('productPrice').value),
+                stock: parseInt(document.getElementById('productStock').value) || 0,
+                image_url: imageUrl,
+                is_available: document.getElementById('productAvailable').checked
+            };
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+
+            try {
+                if (id) {
+                    // Update
+                    const { error } = await _supabase
+                        .from('products')
+                        .update(productData)
+                        .eq('id', id);
+
+                    if (error) throw error;
+                    showToast('Produk berhasil diupdate!', 'success');
+                } else {
+                    // Create
+                    const { error } = await _supabase
+                        .from('products')
+                        .insert([productData]);
+
+                    if (error) throw error;
+                    showToast('Produk berhasil ditambahkan!', 'success');
+                }
+
+                closeModal();
+                loadProducts();
+
+            } catch (error) {
+                console.error('Error saving product:', error);
+                showToast('Gagal menyimpan produk!', 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        // Delete Product
+        async function confirmDelete() {
+            const id = document.getElementById('deleteProductId').value;
+
+            try {
+                const { error } = await _supabase
+                    .from('products')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                closeDeleteModal();
+                loadProducts();
+                showToast('Produk berhasil dihapus!', 'success');
+
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                showToast('Gagal menghapus produk!', 'error');
+            }
+        }
+
+        // Update Stock
+        document.getElementById('stockForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('stockProductId').value;
+            const newStock = parseInt(document.getElementById('newStock').value);
+
+            try {
+                const { error } = await _supabase
+                    .from('products')
+                    .update({ stock: newStock, is_available: newStock > 0 })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                closeStockModal();
+                loadProducts();
+                showToast('Stok berhasil diupdate!', 'success');
+
+            } catch (error) {
+                console.error('Error updating stock:', error);
+                showToast('Gagal update stok!', 'error');
+            }
+        });
+
+        // =============================================
+        // MODAL FUNCTIONS
+        // =============================================
+
+        function openModal(mode, productId = null) {
+            const modal = document.getElementById('productModal');
+            const title = document.getElementById('modalTitle');
+            const form = document.getElementById('productForm');
+            const submitText = document.getElementById('submitBtnText');
+
+            form.reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('productAvailable').checked = true;
+            document.getElementById('productStock').value = '100';
+
+            // Reset image fields
+            clearImagePreview();
+            switchImageTab('upload');
+
+            if (mode === 'edit' && productId) {
+                const product = products.find(p => p.id === productId);
+                if (product) {
+                    title.textContent = 'Edit Produk';
+                    submitText.textContent = 'Update';
+                    document.getElementById('productId').value = product.id;
+                    document.getElementById('productName').value = product.name;
+                    document.getElementById('productCategory').value = product.category;
+                    document.getElementById('productPrice').value = product.price;
+                    document.getElementById('productStock').value = product.stock;
+                    document.getElementById('productAvailable').checked = product.is_available;
+
+                    // Show existing image if available
+                    if (product.image_url) {
+                        document.getElementById('finalImageUrl').value = product.image_url;
+                        document.getElementById('productImage').value = product.image_url;
+                        showImagePreview(product.image_url);
+                    }
+                }
+            } else {
+                title.textContent = 'Tambah Produk';
+                submitText.textContent = 'Simpan';
+            }
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            clearImagePreview();
+        }
+
+        function openStockModal(id, name, currentStock) {
+            document.getElementById('stockModal').classList.remove('hidden');
+            document.getElementById('stockProductId').value = id;
+            document.getElementById('stockProductName').textContent = name;
+            document.getElementById('newStock').value = currentStock;
+        }
+
+        function closeStockModal() {
+            document.getElementById('stockModal').classList.add('hidden');
+        }
+
+        function adjustStock(amount) {
+            const input = document.getElementById('newStock');
+            const newValue = Math.max(0, parseInt(input.value || 0) + amount);
+            input.value = newValue;
+        }
+
+        function openDeleteModal(id, name) {
+            document.getElementById('deleteModal').classList.remove('hidden');
+            document.getElementById('deleteProductId').value = id;
+            document.getElementById('deleteProductName').textContent = `"${name}" akan dihapus permanen.`;
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        // =============================================
+        // IMAGE UPLOAD FUNCTIONS
+        // =============================================
+
+        function switchImageTab(tab) {
+            const tabUpload = document.getElementById('tabUpload');
+            const tabUrl = document.getElementById('tabUrl');
+            const uploadInput = document.getElementById('uploadInput');
+            const urlInput = document.getElementById('urlInput');
+
+            if (tab === 'upload') {
+                tabUpload.classList.add('bg-angkringan-primary', 'text-white');
+                tabUpload.classList.remove('bg-white', 'text-angkringan-primary');
+                tabUrl.classList.remove('bg-angkringan-primary', 'text-white');
+                tabUrl.classList.add('bg-white', 'text-angkringan-primary');
+                uploadInput.classList.remove('hidden');
+                urlInput.classList.add('hidden');
+            } else {
+                tabUrl.classList.add('bg-angkringan-primary', 'text-white');
+                tabUrl.classList.remove('bg-white', 'text-angkringan-primary');
+                tabUpload.classList.remove('bg-angkringan-primary', 'text-white');
+                tabUpload.classList.add('bg-white', 'text-angkringan-primary');
+                urlInput.classList.remove('hidden');
+                uploadInput.classList.add('hidden');
+            }
+        }
+
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('Ukuran file maksimal 2MB!', 'error');
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showToast('File harus berupa gambar!', 'error');
+                return;
+            }
+
+            // Show progress
+            const progressContainer = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('uploadProgressBar');
+            const statusText = document.getElementById('uploadStatus');
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '20%';
+            statusText.textContent = 'Mengupload...';
+
+            try {
+                // Generate unique filename
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 5)}.${fileExt}`;
+
+                progressBar.style.width = '50%';
+
+                // Upload to Supabase Storage
+                const { data, error } = await _supabase.storage
+                    .from('products')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (error) throw error;
+
+                progressBar.style.width = '80%';
+
+                // Get public URL
+                const { data: urlData } = _supabase.storage
+                    .from('products')
+                    .getPublicUrl(fileName);
+
+                const publicUrl = urlData.publicUrl;
+
+                // Set the final image URL
+                document.getElementById('finalImageUrl').value = publicUrl;
+
+                // Show preview
+                showImagePreview(publicUrl);
+
+                progressBar.style.width = '100%';
+                statusText.textContent = 'Upload berhasil!';
+
+                setTimeout(() => {
+                    progressContainer.classList.add('hidden');
+                    progressBar.style.width = '0%';
+                }, 1500);
+
+                showToast('Gambar berhasil diupload!', 'success');
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                progressContainer.classList.add('hidden');
+                showToast('Gagal upload gambar: ' + error.message, 'error');
+            }
+        }
+
+        function previewUrlImage() {
+            const url = document.getElementById('productImage').value;
+            if (url) {
+                document.getElementById('finalImageUrl').value = url;
+                showImagePreview(url);
+            }
+        }
+
+        function showImagePreview(url) {
+            const container = document.getElementById('imagePreviewContainer');
+            const img = document.getElementById('imagePreview');
+            img.src = url;
+            container.classList.remove('hidden');
+        }
+
+        function clearImagePreview() {
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+            document.getElementById('imagePreview').src = '';
+            document.getElementById('finalImageUrl').value = '';
+            document.getElementById('productImage').value = '';
+            document.getElementById('productImageFile').value = '';
+        }
+
+        // =============================================
+        // UTILITY FUNCTIONS
+        // =============================================
+
+        function filterProducts(category) {
+            currentFilter = category;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === category) {
+                    btn.classList.add('bg-angkringan-primary', 'text-white');
+                    btn.classList.remove('bg-white', 'text-angkringan-primary');
+                } else {
+                    btn.classList.remove('bg-angkringan-primary', 'text-white');
+                    btn.classList.add('bg-white', 'text-angkringan-primary');
+                }
+            });
+
+            renderProducts();
+        }
+
+        function updateStats() {
+            document.getElementById('statTotal').textContent = products.length;
+            document.getElementById('statMakanan').textContent = products.filter(p => p.category === 'Makanan').length;
+            document.getElementById('statMinuman').textContent = products.filter(p => p.category === 'Minuman').length;
+            document.getElementById('statLowStock').textContent = products.filter(p => p.stock <= 10).length;
+        }
+
+        function getCategoryColor(category) {
+            switch (category) {
+                case 'Makanan': return 'bg-orange-100 text-orange-600';
+                case 'Minuman': return 'bg-cyan-100 text-cyan-600';
+                case 'Cemilan': return 'bg-purple-100 text-purple-600';
+                default: return 'bg-gray-100 text-gray-600';
+            }
+        }
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const msg = document.getElementById('toastMessage');
+
+            msg.textContent = message;
+            icon.className = type === 'success'
+                ? 'w-5 h-5 text-green-500'
+                : 'w-5 h-5 text-red-500';
+
+            toast.classList.remove('hidden');
+
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // =============================================
+        // INITIALIZE
+        // =============================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            checkAuth();
+        });
+    </script>
+</body>
+
+</html>
